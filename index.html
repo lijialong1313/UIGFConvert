@@ -24,6 +24,28 @@
 </body>
 </html>
 <script>
+	Date.prototype.format = function(fmt) { 
+		 var o = { 
+			"M+" : this.getMonth()+1,                 //月份 
+			"d+" : this.getDate(),                    //日 
+			"h+" : this.getHours(),                   //小时 
+			"m+" : this.getMinutes(),                 //分 
+			"s+" : this.getSeconds(),                 //秒 
+			"q+" : Math.floor((this.getMonth()+3)/3), //季度 
+			"S"  : this.getMilliseconds()             //毫秒 
+		}; 
+		if(/(y+)/.test(fmt)) {
+				fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+		}
+		 for(var k in o) {
+			if(new RegExp("("+ k +")").test(fmt)){
+				 fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+			 }
+		 }
+		return fmt; 
+	}
+</script>
+<script>
     var data;
     //非小酋读取部分
     document.querySelector('#feixiaoqiu').onchange = function (e) {
@@ -58,6 +80,7 @@
         data.info.uid = document.getElementById("uid").value;
         data.info.lang = "zh-cn";
         // data.info.export_timestamp = workbook.Props.CreatedDate.valueOf()/1000;
+		data.info.export_time = workbook.Props.CreatedDate.format("yyyy-MM-dd hh:mm:ss")
         data.info.export_app = "非小酋";
         data.info.export_app_version = "1.0.0";
         data.info.uigf_version = "v2.2";
@@ -88,6 +111,7 @@
         data.info.uid = document.getElementById("uid").value;
         data.info.lang = "zh-cn";
         // data.info.export_timestamp = (workbook.Props.CreatedDate.valueOf())/1000;
+		data.info.export_time = workbook.Props.CreatedDate.format("yyyy-MM-dd hh:mm:ss")
         data.info.export_app = "genshin-wish-export";
         data.info.export_app_version = "1.0.0";
         data.info.uigf_version = "v2.2";
