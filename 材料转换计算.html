@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--    <script src="./xlsx.core.min.js"></script>-->
+    <title>材料计算转换</title>
+</head>
+<body>
+<h2>1.天赋计算</h2>
+<h3>首先，输入你拥有的天赋书数量：</h3>
+<h4>输入绿色天赋书本数</h4>
+<input type="number" id="onehastianfu" placeholder="例如勤劳的教导">
+<h4>输入蓝色天赋书本数</h4>
+<input type="number" id="twohastianfu" placeholder="例如勤劳的指引">
+<h4>输入紫色天赋书本数</h4>
+<input type="number" id="threehastianfu" placeholder="例如勤劳的哲学">
+<h3>然后，输入你需要的天赋书数量：</h3>
+<h4>输入绿色天赋书本数</h4>
+<input type="number" id="oneneedtianfu" placeholder="例如勤劳的教导">
+<h4>输入蓝色天赋书本数</h4>
+<input type="number" id="twoneedtianfu" placeholder="例如勤劳的指引">
+<h4>输入紫色天赋书本数</h4>
+<input type="number" id="threeneedtianfu" placeholder="例如勤劳的哲学">
+<h3>最后，点击计算</h3>
+<input type="button" onclick="tianfuCalculate()" value="计算">
+<div id="resulttianfu">
+
+</div>
+
+<h2>2.材料计算</h2>
+<h3>首先，输入你拥有的材料数量：</h3>
+<h4>输入低级材料数量</h4>
+<input type="number" id="onehascailiao" placeholder="例如骗骗花蜜">
+<h4>输入中级材料数量</h4>
+<input type="number" id="twohascailiao" placeholder="例如微光花蜜">
+<h4>输入高级材料数量</h4>
+<input type="number" id="threehascailiao" placeholder="例如原素花蜜">
+<h3>然后，输入你需要的材料数量：</h3>
+<h4>输入低级材料数量</h4>
+<input type="number" id="oneneedcailiao" placeholder="例如骗骗花蜜">
+<h4>输入中级材料数量</h4>
+<input type="number" id="twoneedcailiao" placeholder="例如微光花蜜">
+<h4>输入高级材料数量</h4>
+<input type="number" id="threeneedcailiao" placeholder="例如原素花蜜">
+<h3>最后，点击计算</h3>
+<input type="button" onclick="cailiaoCalculate()" value="计算">
+<div id="resultcailiao">
+
+</div>
+
+</body>
+</html>
+<script>
+    function tianfuCalculate() {
+        var onehas = document.getElementById("onehastianfu").value;
+        if (isNaN(parseInt(onehas))) {
+            onehas = 0;
+        } else {
+            onehas = parseInt(onehas);
+        }
+        var twohas = document.getElementById("twohastianfu").value;
+        if (isNaN(parseInt(twohas))) {
+            twohas = 0;
+        } else {
+            twohas = parseInt(twohas);
+        }
+        var threehas = document.getElementById("threehastianfu").value;
+        if (isNaN(parseInt(threehas))) {
+            threehas = 0;
+        } else {
+            threehas = parseInt(threehas);
+        }
+        var oneneed = document.getElementById("oneneedtianfu").value;
+        if (isNaN(parseInt(oneneed))) {
+            oneneed = 0;
+        } else {
+            oneneed = parseInt(oneneed);
+        }
+        var twoneed = document.getElementById("twoneedtianfu").value;
+        if (isNaN(parseInt(twoneed))) {
+            twoneed = 0;
+        } else {
+            twoneed = parseInt(twoneed);
+        }
+        var threeneed = document.getElementById("threeneedtianfu").value;
+        if (isNaN(parseInt(threeneed))) {
+            threeneed = 0;
+        } else {
+            threeneed = parseInt(threeneed);
+        }
+        var html = '';
+        var hassum = ((threehas) * 3 + (twohas)) * 3 + (onehas);
+        var needsum = ((threeneed) * 3 + (twoneed)) * 3 + (oneneed);
+        if (hassum > needsum) {
+            html = html + "你有足够的天赋书了！";
+        } else {
+            html = html + "你没有足够的天赋书！缺了绿色天赋书约<b>" + (parseInt(needsum) - parseInt(hassum)) + "</b>本";
+        }
+        document.getElementById("resulttianfu").innerHTML = html;
+    }
+
+    function cailiaoCalculate() {
+        var onehas = document.getElementById("onehascailiao").value;
+        if (isNaN(parseInt(onehas))) {
+            onehas = 0;
+        } else {
+            onehas = parseInt(onehas);
+        }
+        var twohas = document.getElementById("twohascailiao").value;
+        if (isNaN(parseInt(twohas))) {
+            twohas = 0;
+        } else {
+            twohas = parseInt(twohas);
+        }
+        var threehas = document.getElementById("threehascailiao").value;
+        if (isNaN(parseInt(threehas))) {
+            threehas = 0;
+        } else {
+            threehas = parseInt(threehas);
+        }
+        var oneneed = document.getElementById("oneneedcailiao").value;
+        if (isNaN(parseInt(oneneed))) {
+            oneneed = 0;
+        } else {
+            oneneed = parseInt(oneneed);
+        }
+        var twoneed = document.getElementById("twoneedcailiao").value;
+        if (isNaN(parseInt(twoneed))) {
+            twoneed = 0;
+        } else {
+            twoneed = parseInt(twoneed);
+        }
+        var threeneed = document.getElementById("threeneedcailiao").value;
+        if (isNaN(parseInt(threeneed))) {
+            threeneed = 0;
+        } else {
+            threeneed = parseInt(threeneed);
+        }
+        var html = '';
+        var hassum = ((threehas) * 3 + (twohas)) * 3 + (onehas);
+        var needsum = ((threeneed) * 3 + (twoneed)) * 3 + (oneneed);
+        if (hassum > needsum) {
+            html = html + "你有足够的材料了！";
+        } else {
+            html = html + "你没有足够的材料！缺了低级材料约<b>" + (parseInt(needsum) - parseInt(hassum)) + "</b>个";
+        }
+        document.getElementById("resultcailiao").innerHTML = html;
+    }
+</script>
