@@ -2,6 +2,8 @@
 
 UIGF转换工具，用于将excel转换为uigf v2.2的json文件
 
+试用地址：https://lijialong1313.github.io/UIGFConvert/
+
 目前支持：
 
 1.非小酋的excel文件
