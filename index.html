@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./xlsx.core.min.js"></script>
+    <title>UIGF格式转换器</title>
+</head>
+<body>
+<h2>1.填写你的UID</h2>
+<input type="text" id="uid" placeholder="请输入你的uid">
+<h2>2.1.选择非小酋导出的excel文件</h2>
+<input type="file" id="feixiaoqiu"/>
+<h4>注：非小酋版本无法区分角色祈愿1、2</h4>
+<h2>2.2.选择genshin-wish-export导出的excel文件</h2>
+<input type="file" id="genshinwishexport"/>
+<h4>注：genshin-wish-export版本没有抽卡id，会留空</h4>
+<h2>2.3.选择genshin-wish-export转换的json</h2>
+<input type="file" id="genshinwishexportjson"/>
+<h4>注：无需填写uid，但其缺少抽卡id，会留空和无法区分角色祈愿1、2</h4>
+<h3>3.1.点击下载uigfv2.2版本的json文件</h3>
+<input type="button" onclick="exportUIGFV2D2()" value="下载">
+
+</body>
+</html>
+<script>
+    var data;
+    //非小酋读取部分
+    document.querySelector('#feixiaoqiu').onchange = function (e) {
+        let file = e.target.files[0];
+        readWorkbookFromLocalFile(file, function (workbook) {
+            feixiaoqiutoObject(workbook);
+        });
+    }
+    //非小酋读取部分
+    document.querySelector('#genshinwishexport').onchange = function (e) {
+        let file = e.target.files[0];
+        readWorkbookFromLocalFile(file, function (workbook) {
+            genshinwishexporttoObject(workbook);
+        });
+    }
+
+    // 读取本地excel文件，读取Excel文件对象
+    function readWorkbookFromLocalFile(file, callback) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            var data = e.target.result;
+            var workbook = XLSX.read(data, {type: 'binary'});
+            console.log(workbook);
+            if (callback) callback(workbook);
+        };
+        reader.readAsBinaryString(file);
+    }
+
+    function feixiaoqiutoObject(workbook) {
+        data = new Object();
+        data.info = new Object();
+        data.info.uid = document.getElementById("uid").value;
+        data.info.lang = "zh-cn";
+        // data.info.export_timestamp = workbook.Props.CreatedDate.valueOf()/1000;
+        data.info.export_app = "非小酋";
+        data.info.export_app_version = "1.0.0";
+        data.info.uigf_version = "v2.2";
+        //创建list数组
+        data.list = new Array();
+        //常驻祈愿
+        var worksheet = workbook.Sheets['常驻祈愿'];
+        var csv = XLSX.utils.sheet_to_csv(worksheet);
+        data.list = data.list.concat(feixiaoqiuSheets(csv, 200));
+        //角色活动祈愿
+        var worksheet = workbook.Sheets['角色活动祈愿'];
+        var csv = XLSX.utils.sheet_to_csv(worksheet);
+        data.list = data.list.concat(feixiaoqiuSheets(csv, 301));
+        //武器活动祈愿
+        var worksheet = workbook.Sheets['武器活动祈愿'];
+        var csv = XLSX.utils.sheet_to_csv(worksheet);
+        data.list = data.list.concat(feixiaoqiuSheets(csv, 302));
+        //新手祈愿
+        var worksheet = workbook.Sheets['新手祈愿'];
+        var csv = XLSX.utils.sheet_to_csv(worksheet);
+        data.list = data.list.concat(feixiaoqiuSheets(csv, 100));
+        console.log(data);
+    }
+
+    function genshinwishexporttoObject(workbook){
+        data = new Object();
+        data.info = new Object();
+        data.info.uid = document.getElementById("uid").value;
+        data.info.lang = "zh-cn";
+        // data.info.export_timestamp = (workbook.Props.CreatedDate.valueOf())/1000;
+        data.info.export_app = "genshin-wish-export";
+        data.info.export_app_version = "1.0.0";
+        data.info.uigf_version = "v2.2";
+        //创建list数组
+        data.list = new Array();
+        //常驻祈愿
+        var worksheet = workbook.Sheets['常驻祈愿'];
+        var csv = XLSX.utils.sheet_to_csv(worksheet);
+        data.list = data.list.concat(genshinwishexportSheets(csv, 200));
+        //角色活动祈愿
+        var worksheet = workbook.Sheets['角色活动祈愿'];
+        var csv = XLSX.utils.sheet_to_csv(worksheet);
+        data.list = data.list.concat(genshinwishexportSheets(csv, 301));
+        //武器活动祈愿
+        var worksheet = workbook.Sheets['武器活动祈愿'];
+        var csv = XLSX.utils.sheet_to_csv(worksheet);
+        data.list = data.list.concat(genshinwishexportSheets(csv, 302));
+        //新手祈愿
+        var worksheet = workbook.Sheets['新手祈愿'];
+        var csv = XLSX.utils.sheet_to_csv(worksheet);
+        data.list = data.list.concat(genshinwishexportSheets(csv, 100));
+        console.log(data);
+    }
+
+    function feixiaoqiuSheets(csv, uigf_gacha_type) {
+        var list = new Array();
+        var rows = csv.split('\n');
+        //删除最后一行空行
+        rows.pop();
+        //删除第一行标题
+        rows.shift();
+        rows.forEach(v => {
+            var columns = v.split(',');
+            var obj = new Object();
+            obj.uigf_gacha_type = uigf_gacha_type+"";
+            obj.gacha_type = uigf_gacha_type+"";
+            obj.item_id = "";
+            obj.count = "1";
+            obj.time = columns[0];
+            obj.name = columns[1];
+            obj.item_type = columns[2];
+            obj.rank_type = columns[3];
+            obj.id = columns[6];
+            list.push(obj);
+        })
+        return list;
+    }
+
+    function genshinwishexportSheets(csv, uigf_gacha_type) {
+        var list = new Array();
+        var rows = csv.split('\n');
+        //删除最后一行空行
+        rows.pop();
+        //删除第一行标题
+        rows.shift();
+        rows.forEach(v => {
+            var columns = v.split(',');
+            var obj = new Object();
+            obj.uigf_gacha_type = uigf_gacha_type+"";
+            obj.item_id = "";
+            obj.count = "1";
+            obj.time = columns[0];
+            obj.name = columns[1];
+            obj.item_type = columns[2];
+            obj.rank_type = columns[3];
+            obj.id = "";
+            if(columns[6]=="祈愿2"){
+                obj.gacha_type=(400+"");
+            }
+            else{
+                obj.gacha_type = uigf_gacha_type+"";
+            }
+            list.push(obj);
+        })
+        return list;
+    }
+
+    function exportUIGFV2D2() {
+        const blob = new Blob([JSON.stringify(data)]);
+        openDownloadDialog(blob,"uigfv2.2.json");
+    }
+
+    /**
+     * 通用的打开下载对话框方法，没有测试过具体兼容性
+     * @param url 下载地址，也可以是一个blob对象，必选
+     * @param saveName 保存文件名，可选
+     */
+    function openDownloadDialog(url, saveName) {
+        if (typeof url == 'object' && url instanceof Blob) {
+            url = URL.createObjectURL(url); // 创建blob地址
+        }
+        var aLink = document.createElement('a');
+        aLink.href = url;
+        aLink.download = saveName || ''; // HTML5新增的属性，指定保存文件名，可以不要后缀，注意，file:///模式下不会生效
+        var event;
+        if (window.MouseEvent) event = new MouseEvent('click');
+        else {
+            event = document.createEvent('MouseEvents');
+            event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        }
+        aLink.dispatchEvent(event);
+    }
+</script>
